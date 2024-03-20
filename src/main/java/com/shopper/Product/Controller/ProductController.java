@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shopper.Product.Dto.ProductsDTO;
 import com.shopper.Product.Dto.ShopperSearchDTO;
 import com.shopper.Product.Entity.Shopper;
 import com.shopper.Product.Service.ShopperService;
@@ -24,9 +25,8 @@ public class ProductController {
 	private ShopperService shopperService;
 	
 	@PostMapping("/products")
-	public Page<Shopper> getProductsByShopper(@RequestBody @Valid ShopperSearchDTO shopperFilter){
-		Page<Shopper> shopper = shopperService.getProductsByShopper(shopperFilter);
-		return shopper;
+	public List<ProductsDTO> getProductsByShopper(@RequestBody @Valid ShopperSearchDTO shopperFilter){
+		return shopperService.getProductsByShopper(shopperFilter);
 		
 	}
 }

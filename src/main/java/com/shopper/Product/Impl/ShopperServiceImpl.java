@@ -1,6 +1,7 @@
 package com.shopper.Product.Impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.util.Strings;
@@ -12,6 +13,8 @@ import org.springframework.data.util.Predicates;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shopper.Product.Dto.Product;
+import com.shopper.Product.Dto.ProductsDTO;
 import com.shopper.Product.Dto.ShopperSearchDTO;
 import com.shopper.Product.Entity.ProductMetadata;
 import com.shopper.Product.Entity.Shelf;
@@ -29,8 +32,10 @@ public class ShopperServiceImpl implements ShopperService {
 	private ShopperRepository shopperRepository;
 
 	@Override
-	public Page<Shopper> getProductsByShopper(ShopperSearchDTO params) {
-
+	public List<ProductsDTO> getProductsByShopper(ShopperSearchDTO params) {
+		
+		List<ProductsDTO> productsList = new ArrayList<ProductsDTO>();
+		
 		Specification<Shopper> spec = (root, query, criteriaBuilder) -> {
 			Join<Shopper, Shelf> shelfJoin = root.join("shelf");
 			Join<Shelf, ProductMetadata> productJoin = shelfJoin.join("product");
@@ -47,7 +52,17 @@ public class ShopperServiceImpl implements ShopperService {
 			}
 			return criteriaBuilder.and( predicates.toArray(new Predicate[predicates.size()]));
 		};
-		return shopperRepository.findAll(spec,PageRequest.of(0, 10));
+		Page<Shopper> shopperDetails=  shopperRepository.findAll(spec,PageRequest.of(0, 10));
+		shopperDetails.forEach(details ->{
+			for (Shelf shelfs : details.getShelf()) {
+				List<Product> products = Arrays.asList(Product.builder().productId(shelfs.getProduct().getId()).brand(shelfs.getProduct().getBrand())
+						.category(shelfs.getProduct().getCategory()).build());
+				ProductsDTO product = ProductsDTO.builder().product(products).shopperId(details.getShopperId()).build();
+				productsList.add(product);
+			}
+			
+		});
+		return productsList;
 
 	}
 }

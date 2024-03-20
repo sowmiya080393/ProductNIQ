@@ -1,11 +1,11 @@
 package com.shopper.Product.Service;
 
-import org.springframework.data.domain.Page;
+import java.util.List;
 
+import com.shopper.Product.Dto.ProductsDTO;
 import com.shopper.Product.Dto.ShopperSearchDTO;
-import com.shopper.Product.Entity.Shopper;
 
 public interface ShopperService {
 
-	 Page<Shopper> getProductsByShopper(ShopperSearchDTO shopper);
+	 List<ProductsDTO> getProductsByShopper(ShopperSearchDTO shopper);
 }
